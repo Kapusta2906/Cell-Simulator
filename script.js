@@ -193,7 +193,7 @@ const app = {
                 <div class="stat-row"><strong>Posiłki:</strong> ${this.selectedCritter.foodEaten} / ${this.selectedCritter.foodNeededToSplit}</div>
                 <div class="stat-row"><strong>Prędkość:</strong> ${this.selectedCritter.baseSpeed.toFixed(2)}</div>
                 <div class="stat-row"><strong>Wiek:</strong> ${this.selectedCritter.age} cykli</div>
-                <button onclick="app.closeStats()" class="btn-danger" style="margin-top: 12px; padding: 10px;">🔓 Odznacz</button>
+                <button onclick="app.closeStats()" class="btn-danger" style="margin-top: 12px; padding: 10px;">Odznacz</button>
             `;
 
             if (this.isCameraLocked) {
@@ -296,7 +296,7 @@ const app = {
             `;
         });
 
-        html += `<button onclick="app.focusOnCritter('${babyId}')" class="btn-spawn" style="width: 100%; margin-top: 10px; padding: 10px;">🔍 Obserwuj organizm</button>`;
+        html += `<button onclick="app.focusOnCritter('${babyId}')" class="btn-spawn" style="width: 100%; margin-top: 10px; padding: 10px;">Obserwuj organizm</button>`;
         html += '</div>';
 
         content.innerHTML = html;
@@ -525,7 +525,7 @@ class Critter {
         const baby = new Critter(this.x + (Math.random() - 0.5) * 20, this.y + (Math.random() - 0.5) * 20, babyConfig);
         app.critters.push(baby);
         if (mutationOccurred) {
-            app.logMutation(`🌱 ${this.name} (Gen ${babyConfig.generation})`, baby.id, parentSnapshot, baby);
+            app.logMutation(`${this.name} (Gen ${babyConfig.generation})`, baby.id, parentSnapshot, baby);
         }
     }
 
