@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symulator Komórek</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="simCanvas"></canvas>
+
+    <div class="window" id="leftPanel">
+        <div class="window-header">
+            <div class="window-header-title">Kontrola</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('leftPanel')">−</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="stat-row">
+                <strong>Populacja:</strong> <span id="popCount" style="color: #ff6b6b;">0</span>
+            </div>
+            <div class="stat-row">
+                <strong>Surowce:</strong> <span id="foodCount" style="color: #ff9e9e;">0</span>
+            </div>
+
+            <div style="margin-top: 12px; border-top: 1px solid rgba(255, 107, 107, 0.15); padding-top: 10px;">
+                <label>Prędkość</label>
+                <div class="slider-container">
+                    <input type="range" id="simSpeedRange" min="0.1" max="10" step="0.1" value="1" oninput="app.updateSimSpeed(this.value)">
+                    <span class="slider-value" id="speedVal">1x</span>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                <button id="pauseBtn" class="btn-warning" onclick="app.togglePause()">Pauza</button>
+                <button id="energyBtn" class="btn-warning" onclick="app.toggleEnergy()">Energia: WŁ</button>
+                <button onclick="app.addFoodBatch()" class="btn-primary">+ Jedzenie</button>
+                <button onclick="app.spawnRandomCritter()" class="btn-spawn">+ Losowa komórka</button>
+                <button onclick="app.resetCamera()" class="btn-primary">Wycentruj</button>
+                <button onclick="app.clearWorld()" class="btn-danger">Wyczyść świat</button>
+            </div>
+
+            <div class="info-text">
+                LPM: zaznacz | PPM: panorama<br>Kółko: zoom | P: pauza | R: wycentruj
+            </div>
+        </div>
+    </div>
+
+    <div class="window" id="dominantPanel">
+        <div class="window-header">
+            <div class="window-header-title">Dominujący gatunek</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('dominantPanel')">−</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="dominant-info">
+                <div class="dominant-name" id="dominantName">—</div>
+                <div class="dominant-count" id="dominantCount">0</div>
+            </div>
+            <button onclick="app.focusRandomDominant()" class="btn-spawn" id="jumpDominantBtn" disabled>Obserwuj lidera</button>
+            <div class="info-text">Najliczniejsza rodzina w ekosystemie</div>
+        </div>
+    </div>
+
+    <div class="window" id="creatorPanel">
+        <div class="window-header">
+            <div class="window-header-title">Kreator</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('creatorPanel')">−</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <label>Nazwa</label>
+            <input type="text" id="cName" placeholder="Wpisz nazwę...">
+
+            <label>Skórka (opcjonalnie)</label>
+            <input type="file" id="cImage" accept="image/*">
+
+            <label>Rozmiar</label>
+            <div class="slider-container">
+                <input type="range" id="cSize" min="5" max="35" value="12" oninput="document.getElementById('cSizeVal').innerText = this.value">
+                <span class="slider-value" id="cSizeVal">12</span>
+            </div>
+
+            <label>Kolor</label>
+            <input type="color" id="cColor" value="#ff6b6b">
+
+            <label>Dieta</label>
+            <select id="cDiet">
+                <option value="herbivore">Roślinożerca</option>
+                <option value="predator">Drapieżnik</option>
+                <option value="omnivore">Wszystkożerca</option>
+            </select>
+
+            <label>Prędkość</label>
+            <div class="slider-container">
+                <input type="range" id="cSpeed" min="1" max="6" value="3" step="0.1" oninput="document.getElementById('cSpeedVal').innerText = this.value">
+                <span class="slider-value" id="cSpeedVal">3.0</span>
+            </div>
+
+            <label>Próg reprodukcji</label>
+            <div class="slider-container">
+                <input type="range" id="cReproThreshold" min="2" max="10" value="4" oninput="document.getElementById('cThresholdVal').innerText = this.value">
+                <span class="slider-value" id="cThresholdVal">4</span>
+            </div>
+
+            <button onclick="app.spawnCustomCritter()" class="btn-spawn" style="margin-top: 12px;">Stwórz organizm</button>
+        </div>
+    </div>
+
+    <div class="window" id="mutationLog">
+        <div class="window-header">
+            <div class="window-header-title">Dziennik Ewolucji</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('mutationLog')">−</button>
+            </div>
+        </div>
+        <div class="window-content" id="mutationLogContent">
+        </div>
+    </div>
+
+    <div class="window" id="statsPanel">
+        <div class="window-header">
+            <div class="window-header-title">Statystyki</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('statsPanel')">−</button>
+                <button class="window-btn" onclick="app.closeStats()">✕</button>
+            </div>
+        </div>
+        <div class="window-content" id="statsContent">
+        </div>
+    </div>
+
+    <div class="window" id="comparisonPanel">
+        <div class="window-header">
+            <div class="window-header-title">Porównanie Genów</div>
+            <div class="window-header-buttons">
+                <button class="window-btn" onclick="app.toggleWindow('comparisonPanel')">−</button>
+                <button class="window-btn" onclick="document.getElementById('comparisonPanel').classList.remove('visible')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" id="comparisonContent">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
